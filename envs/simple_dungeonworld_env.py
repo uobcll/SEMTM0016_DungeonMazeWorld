@@ -19,7 +19,7 @@ class Actions(IntEnum):
     forwards = 2
 
 class Directions(IntEnum):
-    # Enumeration of xardinal directions the robot can face
+    # Enumeration of cardinal directions the robot can face
     # taking north as top of maze
     north = 0
     east = 1
@@ -32,11 +32,9 @@ class DungeonMazeEnv(gym.Env):
     """
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
 
-    def __init__(self, render_mode=None, grid_size=16, max_steps=1000):
+    def __init__(self, render_mode=None, grid_size=16):
         self.grid_size = grid_size
         self.window_size = 512
-
-        self.max_steps = max_steps
 
         # We have 3 actions, corresponding to "turn right", "turn left", "move forwards"
         self.action_space = spaces.Discrete(len(Actions))
@@ -58,25 +56,22 @@ class DungeonMazeEnv(gym.Env):
         assert render_mode is None or render_mode in self.metadata["render_modes"]
         self.render_mode = render_mode
 
-        """
-        If human-rendering is used, `self.window` will be a reference
-        to the window that we draw to. `self.clock` will be a clock that is used
-        to ensure that the environment is rendered at the correct framerate in
-        human-mode. They will remain `None` until human-mode is used for the
-        first time.
-        """
+        # If human-rendering is used, `self.window` will be a reference
+        # to the window that we draw to. `self.clock` will be a clock that is used
+        # to ensure that the environment is rendered at the correct framerate in
+        # human-mode. They will remain `None` until human-mode is used for the
+        # first time.
+        
         self.window = None
         self.clock = None
 
     def get_observations(self):
-        return {"robot_position": self.robot_position,
-                "robot_direction": self.robot_direction,
-                "robot_camera_view": self.robot_camera_view,
-                "target_position": self.target_position, 
-                }
-    
-    def get_reward(self):
-        return 1 - 0.9 * (self.step_count / self.max_steps)
+        return {
+            "robot_position": self.robot_position,
+            "robot_direction": self.robot_direction,
+            "robot_camera_view": self.robot_camera_view,
+            "target_position": self.target_position, 
+        }
     
     def get_robot_direction_vector(self):
         """
@@ -84,14 +79,14 @@ class DungeonMazeEnv(gym.Env):
         of forward movement.
         """
         direction_vectors = [
-        # Up (negative Y)
-        np.array((0, -1)),
-        # Pointing right (positive X)
-        np.array((1, 0)),
-        # Down (positive Y)
-        np.array((0, 1)),
-        # Pointing left (negative X)
-        np.array((-1, 0)),
+            # Up (negative Y)
+            np.array((0, -1)),
+            # Pointing right (positive X)
+            np.array((1, 0)),
+            # Down (positive Y)
+            np.array((0, 1)),
+            # Pointing left (negative X)
+            np.array((-1, 0)),
         ]
         assert self.robot_direction >= 0 and self.robot_direction < 4
         return direction_vectors[self.robot_direction]
@@ -133,21 +128,15 @@ class DungeonMazeEnv(gym.Env):
         # Update the observations
         observation = self.get_observations()
 
-        # Initialise step count
-        self.step_count = 0
-
         if self.render_mode == "human":
             self._render_frame()
 
         return observation, {}     
     
     def step(self, action):
-        # Update step count
-        self.step_count += 1
 
-        reward = 0
+        reward = -1
         terminated = False
-        stuck = False
 
         # Get the position in front of the robot
         position_in_front = self.get_robot_front_pos()
@@ -168,7 +157,9 @@ class DungeonMazeEnv(gym.Env):
             if cell_in_front == None or cell_in_front.can_overlap():
                 self.robot_position = position_in_front
             else:
-                stuck = True
+                # Terminate with penalty as robot tried to crash into an object in the cell in front.
+                terminated = True
+                reward = -100
         else:
             assert False, "unknown action"
 
@@ -178,19 +169,14 @@ class DungeonMazeEnv(gym.Env):
         # Update the observations
         observation = self.get_observations()
 
-        # Episode is terminated if max steps reached
-        if self.step_count >= self.max_steps:
-            terminated = True
-
         # An episode is terminated if the agent has reached the target
         if np.array_equal(self.robot_position, self.target_position):
-            reward = self.get_reward()
             terminated = True
 
         if self.render_mode == "human":
             self._render_frame()
 
-        return observation, reward, terminated, stuck, {}
+        return observation, reward, terminated, False, {}
 
     def render(self):
         if self.render_mode == "rgb_array":

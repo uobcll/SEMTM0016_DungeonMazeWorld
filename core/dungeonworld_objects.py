@@ -11,16 +11,29 @@ class MazeObject:
         self.image = None
 
     def can_overlap(self):
+        """
+        Boolean indicating whether robot and object can occupy the same cell.
+        """
         return False
     
     def get_camera_view(self):
-        # Returns the 'camera view' of the robot when facing cell.
+        """
+        Returns the 'camera view' of the robot when facing cell.
+        """
         return self.image
     
-    def can_be_fought_sword(self):
+    def can_be_killed_by_sword(self):
+        """
+        Boolean indicating whether object can be killed (i.e. removed from the environment) 
+        by robot using a sword.
+        """
         return False
-    
-    def can_be_fought_bow(self):
+
+    def can_be_killed_by_bow(self):
+        """
+        Boolean indicating whether object can be killed (i.e. removed from the environment) 
+        by robot using a bow.
+        """
         return False
     
 class Target(MazeObject):
@@ -59,7 +72,7 @@ class Orc(MazeObject):
     def can_overlap(self):
         return True
     
-    def can_be_fought_sword(self):
+    def can_be_killed_by_sword(self):
         return True
     
 class Wingedbat(MazeObject):
@@ -77,7 +90,7 @@ class Wingedbat(MazeObject):
     def can_overlap(self):
         return True
     
-    def can_be_fought_bow(self):
+    def can_be_killed_by_bow(self):
         return True
     
 class Lizard(MazeObject):
@@ -95,8 +108,8 @@ class Lizard(MazeObject):
     def can_overlap(self):
         return True
     
-    def can_be_fought_bow(self):
+    def can_be_killed_by_bow(self):
         return True
 
-    def can_be_fought_sword(self):
+    def can_be_killed_by_sword(self):
         return True
