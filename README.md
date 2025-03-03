@@ -2,7 +2,7 @@
 
 ## Overview
 
-Simple implementation of the maze solving gridworld problem based on [Gymnasium]{https://gymnasium.farama.org/index.html} and heavily inspired by [Minigrid]{https://minigrid.farama.org/index.html}.
+Simple implementation of the maze solving gridworld problem based on [Gymnasium](https://gymnasium.farama.org/index.html) and heavily inspired by [Minigrid](https://minigrid.farama.org/index.html).
 
 ## How do you use it?
 
