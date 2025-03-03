@@ -1,7 +1,7 @@
 from envs.simple_dungeonworld_env import DungeonMazeEnv
 import numpy as np
 
-SIZE=8
+SIZE = 8
 
 # Load the simple dungeon maze env
 env = DungeonMazeEnv(render_mode="human", grid_size=SIZE)
@@ -22,5 +22,5 @@ obs = env.reset(seed=124)
 env.render()
 
 # Check target in the correct place
-assert env.maze.get(SIZE-2, SIZE-2).type == 'target'
-assert np.array_equal(146*np.ones((20,20)), env.maze.get(SIZE-2, SIZE-2).image)
+assert env.maze.get(SIZE - 2, SIZE - 2).type == "target"
+assert np.array_equal(146 * np.ones((20, 20)), env.maze.get(SIZE - 2, SIZE - 2).image)
