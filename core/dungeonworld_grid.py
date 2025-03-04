@@ -71,9 +71,17 @@ class MazeGrid:
         'lizard': 5,
     }
 
+    # A flipped version of OBJECT_TO_IDX where the keys and values have been switched
     IDX_TO_OBJECT = dict(zip(OBJECT_TO_IDX.values(), OBJECT_TO_IDX.keys()))
 
     def __init__(self, size, empty=True, np_rng=None):
+        """Set up the maze.
+        
+        If `empty` is True then just create an empty grid.
+        Otherwise generate the maze, add walls and add a target.
+
+        If `np_rng` is provided, this will be used as the seed for the rng.
+        """
         # Maze is always square
         self.width = size
         self.height = size
@@ -85,16 +93,21 @@ class MazeGrid:
             self.add_maze_and_target(np_rng)
 
     def __eq__(self, other):
+        """Allows us to compare mazes to one another."""
         grid1 = self.encode_maze_to_array()
         grid2 = other.encode_maze_to_array()
         return np.array_equal(grid2, grid1)
 
-    def add(self, x, y, maze_object):
+    # TODO: add_cell_item might be better?
+    def add_grid_item(self, x, y, maze_object):
+        """Add maze object to grid at the specified x y coordinates."""
         assert x>=0 and x<self.width
         assert y>=0 and y<self.height
         self.grid[y * self.width + x] = maze_object
 
-    def get(self, x, y):
+    # TODO: get_cell_item might be better?
+    def get_grid_item(self, x, y):
+        """Retrieve an item from the grid at the specified x y coordinates."""
         assert x>=0 and x<self.width
         assert y>=0 and y<self.height
         return self.grid[y * self.width + x]
@@ -131,7 +144,7 @@ class MazeGrid:
 
         for i in range(self.width):
             for j in range(self.height):
-                maze_object = self.get(i, j)
+                maze_object = self.get_grid_item(i, j)
                 if maze_object == None:
                     array[i,j] = self.OBJECT_TO_IDX['empty']
                 else:
@@ -142,6 +155,8 @@ class MazeGrid:
     def decode_maze_from_array(array):
         """
         Produces the grid for the maze from an encoded array.
+
+        # TODO: Add an example of an encoded array to the docstring
         """
         width, height = array.shape
         assert width == height
@@ -168,7 +183,7 @@ class MazeGrid:
                     else:
                         assert False, f"Unknown maze object type in decode {maze_object_type}"
 
-                maze.add(i, j, maze_object)
+                maze.add_grid_item(i, j, maze_object)
         return maze
 
 

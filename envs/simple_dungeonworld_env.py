@@ -33,6 +33,7 @@ class DungeonMazeEnv(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
 
     def __init__(self, render_mode=None, grid_size=16):
+        """TODO: Add docstring outlining what this does."""
         self.grid_size = grid_size
         self.window_size = 512
 
@@ -66,6 +67,7 @@ class DungeonMazeEnv(gym.Env):
         self.clock = None
 
     def get_observations(self):
+        """TODO: Add docstring saying what an observation is."""
         return {
             "robot_position": self.robot_position,
             "robot_direction": self.robot_direction,
@@ -98,11 +100,12 @@ class DungeonMazeEnv(gym.Env):
         return self.robot_position + self.get_robot_direction_vector()
     
     def get_robot_camera_view(self):
+        """TODO: Add docstring explaining what the robot camera view is."""
         # Get the position in front of the robot
         position_in_front = self.get_robot_front_pos()
 
         # Get the contents of the cell in front of the agent
-        cell_in_front = self.maze.get(*position_in_front)
+        cell_in_front = self.maze.get_grid_item(*position_in_front)
 
         if cell_in_front == None:
             # if nothing in front return a white image
@@ -111,6 +114,7 @@ class DungeonMazeEnv(gym.Env):
             return cell_in_front.get_camera_view()
 
     def reset(self, seed=None, options=None):
+        """TODO: Add docstring explaining what this does."""
         # We need the following line to seed self.np_random
         super().reset(seed=seed)
 
@@ -134,7 +138,7 @@ class DungeonMazeEnv(gym.Env):
         return observation, {}     
     
     def step(self, action):
-
+        """TODO: Add docstring explaining what this does."""
         reward = -1
         terminated = False
 
@@ -142,7 +146,7 @@ class DungeonMazeEnv(gym.Env):
         position_in_front = self.get_robot_front_pos()
 
         # Get the contents of the cell in front of the agent
-        cell_in_front = self.maze.get(*position_in_front)
+        cell_in_front = self.maze.get_grid_item(*position_in_front)
 
         # Attempt actions
         if action == Actions.left:
@@ -206,7 +210,7 @@ class DungeonMazeEnv(gym.Env):
             ),
         )
 
-        # Add the walls
+        # Draw the walls
         for cell in self.maze.grid:
             if cell != None and cell.type == 'wall':
                 pygame.draw.rect(
@@ -252,7 +256,7 @@ class DungeonMazeEnv(gym.Env):
                 (self.robot_position + np.array([0.1, 0.5])) * pix_square_size),
             )
 
-        # Finally, add some gridlines
+        # Finally, draw some gridlines
         for x in range(self.grid_size + 1):
             pygame.draw.line(
                 canvas,
