@@ -132,7 +132,7 @@ class MazeGrid:
         for i in range(self.width):
             for j in range(self.height):
                 maze_object = self.get(i, j)
-                if maze_object == None:
+                if maze_object is None:
                     array[i,j] = self.OBJECT_TO_IDX['empty']
                 else:
                     array[i,j] = self.OBJECT_TO_IDX[maze_object.type]
