@@ -152,21 +152,21 @@ class MazeGrid:
                 maze_object_type_index =array[i,j]
                 if maze_object_type_index == MazeGrid.OBJECT_TO_IDX['empty']:
                     continue
-                else:
-                    maze_object_type = MazeGrid.IDX_TO_OBJECT[maze_object_type_index]
 
-                    if maze_object_type == 'wall':
-                        maze_object = Wall(pos=np.array([i, j]))
-                    elif maze_object_type == 'target':
-                        maze_object = Target(pos=np.array([i, j]))
-                    elif maze_object_type == 'orc':
-                        maze_object = Orc(pos=np.array([i, j]))
-                    elif maze_object_type == 'wingedbat':
-                        maze_object = Wingedbat(pos=np.array([i, j]))
-                    elif maze_object_type == 'lizard':
-                        maze_object = Lizard(pos=np.array([i, j]))
-                    else:
-                        assert False, f"Unknown maze object type in decode {maze_object_type}"
+                maze_object_type = MazeGrid.IDX_TO_OBJECT[maze_object_type_index]
+
+                if maze_object_type == 'wall':
+                    maze_object = Wall(pos=np.array([i, j]))
+                elif maze_object_type == 'target':
+                    maze_object = Target(pos=np.array([i, j]))
+                elif maze_object_type == 'orc':
+                    maze_object = Orc(pos=np.array([i, j]))
+                elif maze_object_type == 'wingedbat':
+                    maze_object = Wingedbat(pos=np.array([i, j]))
+                elif maze_object_type == 'lizard':
+                    maze_object = Lizard(pos=np.array([i, j]))
+                else:
+                    assert False, f"Unknown maze object type in decode {maze_object_type}"
 
                 maze.add(i, j, maze_object)
         return maze
