@@ -63,9 +63,10 @@ class Orc(MazeObject):
     Can be killed with a sword but not a bow as too strong.
     Will kill robot if overlapped.
     """
-    def __init__(self, pos):
+    def __init__(self, pos, image_id):
         super().__init__('orc', pos)
-        im = Image.open("images/orc.png")
+        assert image_id >= 0 and image_id <= 99
+        im = Image.open("images/orc/orc_{}.png".format(str(image_id).zfill(3)))
         self.image = np.array(im)
         im.close()
 
@@ -81,9 +82,10 @@ class Wingedbat(MazeObject):
     Can be killed with a bow but not a sword as flying.
     Will kill robot if overlapped.
     """
-    def __init__(self, pos):
+    def __init__(self, pos, image_id):
         super().__init__('wingedbat', pos)
-        im = Image.open("images/wingedbat.png")
+        assert image_id >= 0 and image_id <= 99
+        im = Image.open("images/wingedbat/wingedbat_{}.png".format(str(image_id).zfill(3)))
         self.image = np.array(im)
         im.close()
 
@@ -99,9 +101,10 @@ class Lizard(MazeObject):
     Can be killed with both bow and sword.
     Will kill robot if overlapped.
     """
-    def __init__(self, pos):
+    def __init__(self, pos, image_id):
         super().__init__('lizard', pos)
-        im = Image.open("images/lizard.png")
+        assert image_id >= 0 and image_id <= 99
+        im = Image.open("images/lizard/lizard_{}.png".format(str(image_id).zfill(3)))
         self.image = np.array(im)
         im.close()
 
