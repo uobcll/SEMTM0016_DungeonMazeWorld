@@ -81,8 +81,23 @@ class MazeGrid:
         # Initialise empty grid
         self.grid = [None] * size * size
 
-        if not empty:
-            self.add_maze_and_target(np_rng)
+        # if we have requested an empty maze, then there's nothing more to do and we can exit the
+        # method early
+        if empty:
+            return
+        
+        # Otherwise, generate the maze, add the walls and add the target
+        
+        # Generate the maze
+        maze = generate_maze(size, np_rng)
+
+        # Add the walls to grid
+        for (x, y), elem in np.ndenumerate(maze):
+            if elem == 1:
+                self.add(x, y, Wall(pos=np.array([x, y])))
+
+        # Add the target at the maze exit (always at [-2, -2])
+        self.add(self.width-2, self.height-2, Target(pos=np.array([-2, -2])))
 
     def __eq__(self, other):
         grid1 = self.encode_maze_to_array()
@@ -98,30 +113,6 @@ class MazeGrid:
         assert x>=0 and x<self.width
         assert y>=0 and y<self.height
         return self.grid[y * self.width + x]
-    
-    def add_maze_walls(self, size, np_rng):
-        """
-        Adds wall objects to the grid according to a randomly generated maze.
-        Maze entrance is always at [1, 1] and maze exit is always at [-2, -2].
-        """
-        # Generate the maze
-        maze = generate_maze(size, np_rng)
-
-        # Add walls to grid
-        for (x, y), elem in np.ndenumerate(maze):
-            if elem == 1:
-                self.add(x, y, Wall(pos=np.array([x, y])))
-    
-    def add_maze_and_target(self, np_rng):
-        """
-        Add the maze walls and target to grid.
-        Target always at location [size-2, size-2] to align with maze generation.
-        """
-        # Add the walls of the maze
-        self.add_maze_walls(self.width, np_rng)
-
-        # Add the target at the maze exit (always at [-2, -2])
-        self.add(self.width-2, self.height-2, Target(pos=np.array([-2, -2])))
 
     def encode_maze_to_array(self):
         """
