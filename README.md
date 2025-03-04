@@ -8,12 +8,12 @@ Simple implementation of the maze solving gridworld problem based on [Gymnasium]
 
 ## Default MDP (`DungeonMazeEnv` class)
 
-Action Space: The action space is discrete in the range `{0,4}` for `{turn left, turn right, move forwards}`.
+Action Space: The action space is discrete in the range `{0,2}` for `{turn left, turn right, move forwards}`.
 
 Observation Space: The observation space is a composite with:
 
 - The robot's (x,y) postion encoded as an element of `{0, ..., size-1}^2`.
-- The robot's cardinal direction encoded as an integer `{0, ..., 4}`.
+- The robot's cardinal direction encoded as an integer `{0, ..., 3}`.
 - The robot's 'camera view' encoded as a 20x20 pixel greyscale image, `{0, ..., 255}^(20x20)`.
 - The target (x,y) postion encoded as an element of `{0, ..., size-1}^2`.
 
