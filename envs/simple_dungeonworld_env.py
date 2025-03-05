@@ -14,9 +14,9 @@ from core.dungeonworld_grid import MazeGrid
 class Actions(IntEnum):
     # Enumeration of possible actions
     # Turn right, turn left, move forwards
-    right = 0
-    left = 1
-    forwards = 2
+    turn_right = 0
+    turn_left = 1
+    move_forwards = 2
 
 class Directions(IntEnum):
     # Enumeration of cardinal directions the robot can face
@@ -33,6 +33,9 @@ class DungeonMazeEnv(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
 
     def __init__(self, render_mode=None, grid_size=16):
+        """
+        Initialises the simulation environment with the given grid size.
+        """
         self.grid_size = grid_size
         self.window_size = 512
 
@@ -66,6 +69,10 @@ class DungeonMazeEnv(gym.Env):
         self.clock = None
 
     def get_observations(self):
+        """
+        Returns a dictionary containing the robot's position, direction and camera view
+        and the target position.
+        """
         return {
             "robot_position": self.robot_position,
             "robot_direction": self.robot_direction,
@@ -98,11 +105,15 @@ class DungeonMazeEnv(gym.Env):
         return self.robot_position + self.get_robot_direction_vector()
     
     def get_robot_camera_view(self):
+        """
+        Returns the 'camera view' for the robot i.e. the image the object in the cell 
+        in front of the robot. If the cell is empty, then returns a white image.
+        """
         # Get the position in front of the robot
         position_in_front = self.get_robot_front_pos()
 
         # Get the contents of the cell in front of the agent
-        cell_in_front = self.maze.get(*position_in_front)
+        cell_in_front = self.maze.get_grid_item(*position_in_front)
 
         if cell_in_front is None:
             # if nothing in front return a white image
@@ -111,6 +122,11 @@ class DungeonMazeEnv(gym.Env):
             return cell_in_front.get_camera_view()
 
     def reset(self, seed=None, options=None):
+        """
+        Initialises the environment for a new episode with a randomly generated maze.
+        Robot is always initialised at position [1,1] facing south.
+        Target is always initialised at [-2,-2]. 
+        """
         # We need the following line to seed self.np_random
         super().reset(seed=seed)
 
@@ -134,7 +150,10 @@ class DungeonMazeEnv(gym.Env):
         return observation, {}     
     
     def step(self, action):
-
+        """
+        Performs one step of the simulation with the given action. 
+        Returning the new state, reward and whether the episode has terminated.
+        """
         reward = -1
         terminated = False
 
@@ -142,18 +161,18 @@ class DungeonMazeEnv(gym.Env):
         position_in_front = self.get_robot_front_pos()
 
         # Get the contents of the cell in front of the agent
-        cell_in_front = self.maze.get(*position_in_front)
+        cell_in_front = self.maze.get_grid_item(*position_in_front)
 
         # Attempt actions
-        if action == Actions.left:
+        if action == Actions.turn_left:
             self.robot_direction -= 1
             if self.robot_direction < 0:
                 self.robot_direction += 4
-        elif action == Actions.right:
+        elif action == Actions.turn_right:
             self.robot_direction += 1
             if self.robot_direction > 3:
                 self.robot_direction -= 4
-        elif action == Actions.forwards:
+        elif action == Actions.move_forwards:
             if cell_in_front is None or cell_in_front.can_overlap():
                 self.robot_position = position_in_front
             else:
@@ -206,7 +225,7 @@ class DungeonMazeEnv(gym.Env):
             ),
         )
 
-        # Add the walls
+        # Draw the walls
         for cell in self.maze.grid:
             if cell is not None and cell.type == 'wall':
                 pygame.draw.rect(
@@ -252,7 +271,7 @@ class DungeonMazeEnv(gym.Env):
                 (self.robot_position + np.array([0.1, 0.5])) * pix_square_size),
             )
 
-        # Finally, add some gridlines
+        # Finally, draw some gridlines
         for x in range(self.grid_size + 1):
             pygame.draw.line(
                 canvas,
