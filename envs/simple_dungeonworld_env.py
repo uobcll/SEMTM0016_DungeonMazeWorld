@@ -113,7 +113,7 @@ class DungeonMazeEnv(gym.Env):
         position_in_front = self.get_robot_front_pos()
 
         # Get the contents of the cell in front of the agent
-        cell_in_front = self.maze.get_grid_item(*position_in_front)
+        cell_in_front = self.maze.get_cell_item(*position_in_front)
 
         if cell_in_front is None:
             # if nothing in front return a white image
@@ -161,7 +161,7 @@ class DungeonMazeEnv(gym.Env):
         position_in_front = self.get_robot_front_pos()
 
         # Get the contents of the cell in front of the agent
-        cell_in_front = self.maze.get_grid_item(*position_in_front)
+        cell_in_front = self.maze.get_cell_item(*position_in_front)
 
         # Attempt actions
         if action == Actions.turn_left:
