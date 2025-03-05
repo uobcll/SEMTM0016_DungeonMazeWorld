@@ -1,5 +1,4 @@
 from envs.simple_dungeonworld_env import DungeonMazeEnv
-import numpy as np
 
 SIZE=8
 
