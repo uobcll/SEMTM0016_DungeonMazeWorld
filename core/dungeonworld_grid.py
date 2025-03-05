@@ -89,8 +89,23 @@ class MazeGrid:
         # Initialise empty grid
         self.grid = [None] * size * size
 
-        if not empty:
-            self.add_maze_and_target(np_rng)
+        # if we have requested an empty maze, then there's nothing more to do and we can exit the
+        # method early
+        if empty:
+            return
+        
+        # Otherwise, generate the maze, add the walls and add the target
+        
+        # Generate the maze
+        maze = generate_maze(size, np_rng)
+
+        # Add the walls to grid
+        for (x, y), elem in np.ndenumerate(maze):
+            if elem == 1:
+                self.add_grid_item(x, y, Wall(pos=np.array([x, y])))
+
+        # Add the target at the maze exit (always at [-2, -2])
+        self.add_grid_item(self.width-2, self.height-2, Target(pos=np.array([-2, -2])))
 
     def __eq__(self, other):
         """Allows us to compare mazes to one another."""
@@ -111,30 +126,6 @@ class MazeGrid:
         assert x>=0 and x<self.width
         assert y>=0 and y<self.height
         return self.grid[y * self.width + x]
-    
-    def add_maze_walls(self, size, np_rng):
-        """
-        Adds wall objects to the grid according to a randomly generated maze.
-        Maze entrance is always at [1, 1] and maze exit is always at [-2, -2].
-        """
-        # Generate the maze
-        maze = generate_maze(size, np_rng)
-
-        # Add walls to grid
-        for (x, y), elem in np.ndenumerate(maze):
-            if elem == 1:
-                self.add(x, y, Wall(pos=np.array([x, y])))
-    
-    def add_maze_and_target(self, np_rng):
-        """
-        Add the maze walls and target to grid.
-        Target always at location [size-2, size-2] to align with maze generation.
-        """
-        # Add the walls of the maze
-        self.add_maze_walls(self.width, np_rng)
-
-        # Add the target at the maze exit (always at [-2, -2])
-        self.add(self.width-2, self.height-2, Target(pos=np.array([-2, -2])))
 
     def encode_maze_to_array(self):
         """
@@ -145,7 +136,7 @@ class MazeGrid:
         for i in range(self.width):
             for j in range(self.height):
                 maze_object = self.get_grid_item(i, j)
-                if maze_object == None:
+                if maze_object is None:
                     array[i,j] = self.OBJECT_TO_IDX['empty']
                 else:
                     array[i,j] = self.OBJECT_TO_IDX[maze_object.type]
@@ -167,21 +158,21 @@ class MazeGrid:
                 maze_object_type_index =array[i,j]
                 if maze_object_type_index == MazeGrid.OBJECT_TO_IDX['empty']:
                     continue
-                else:
-                    maze_object_type = MazeGrid.IDX_TO_OBJECT[maze_object_type_index]
 
-                    if maze_object_type == 'wall':
-                        maze_object = Wall(pos=np.array([i, j]))
-                    elif maze_object_type == 'target':
-                        maze_object = Target(pos=np.array([i, j]))
-                    elif maze_object_type == 'orc':
-                        maze_object = Orc(pos=np.array([i, j]))
-                    elif maze_object_type == 'wingedbat':
-                        maze_object = Wingedbat(pos=np.array([i, j]))
-                    elif maze_object_type == 'lizard':
-                        maze_object = Lizard(pos=np.array([i, j]))
-                    else:
-                        assert False, f"Unknown maze object type in decode {maze_object_type}"
+                maze_object_type = MazeGrid.IDX_TO_OBJECT[maze_object_type_index]
+
+                if maze_object_type == 'wall':
+                    maze_object = Wall(pos=np.array([i, j]))
+                elif maze_object_type == 'target':
+                    maze_object = Target(pos=np.array([i, j]))
+                elif maze_object_type == 'orc':
+                    maze_object = Orc(pos=np.array([i, j]))
+                elif maze_object_type == 'wingedbat':
+                    maze_object = Wingedbat(pos=np.array([i, j]))
+                elif maze_object_type == 'lizard':
+                    maze_object = Lizard(pos=np.array([i, j]))
+                else:
+                    assert False, f"Unknown maze object type in decode {maze_object_type}"
 
                 maze.add_grid_item(i, j, maze_object)
         return maze

@@ -107,7 +107,7 @@ class DungeonMazeEnv(gym.Env):
         # Get the contents of the cell in front of the agent
         cell_in_front = self.maze.get_grid_item(*position_in_front)
 
-        if cell_in_front == None:
+        if cell_in_front is None:
             # if nothing in front return a white image
             return np.ones((20,20))*255
         else:
@@ -158,7 +158,7 @@ class DungeonMazeEnv(gym.Env):
             if self.robot_direction > 3:
                 self.robot_direction -= 4
         elif action == Actions.forwards:
-            if cell_in_front == None or cell_in_front.can_overlap():
+            if cell_in_front is None or cell_in_front.can_overlap():
                 self.robot_position = position_in_front
             else:
                 # Terminate with penalty as robot tried to crash into an object in the cell in front.
@@ -212,7 +212,7 @@ class DungeonMazeEnv(gym.Env):
 
         # Draw the walls
         for cell in self.maze.grid:
-            if cell != None and cell.type == 'wall':
+            if cell is not None and cell.type == 'wall':
                 pygame.draw.rect(
                     canvas,
                     (0, 0, 0),
