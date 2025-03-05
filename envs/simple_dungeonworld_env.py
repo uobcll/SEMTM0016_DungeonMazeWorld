@@ -1,6 +1,7 @@
 """
 Simple HeroBot and the MazeDungeon Environment.
 """
+
 from enum import IntEnum
 
 import numpy as np
@@ -11,12 +12,14 @@ from gymnasium import spaces
 
 from core.dungeonworld_grid import MazeGrid
 
+
 class Actions(IntEnum):
     # Enumeration of possible actions
     # Turn right, turn left, move forwards
     turn_right = 0
     turn_left = 1
     move_forwards = 2
+
 
 class Directions(IntEnum):
     # Enumeration of cardinal directions the robot can face
@@ -26,10 +29,12 @@ class Directions(IntEnum):
     south = 2
     west = 3
 
+
 class DungeonMazeEnv(gym.Env):
     """
     2D maze grid world environment for robot.
     """
+
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
 
     def __init__(self, render_mode=None, grid_size=16):
@@ -41,7 +46,7 @@ class DungeonMazeEnv(gym.Env):
 
         # We have 3 actions, corresponding to "turn right", "turn left", "move forwards"
         self.action_space = spaces.Discrete(len(Actions))
-        
+
         # Observations are dictionaries with:
         # The robot postion encoded as an element of {0, ..., size-1}^2,
         # The robot direction encoded as an integer {0, ..., 4},
@@ -51,7 +56,9 @@ class DungeonMazeEnv(gym.Env):
             {
                 "robot_position": spaces.Box(0, grid_size - 1, shape=(2,), dtype=int),
                 "robot_direction": spaces.Discrete(len(Directions)),
-                "robot_camera_view": spaces.Box(low=0, high=255, shape=(20, 20), dtype=np.int32),
+                "robot_camera_view": spaces.Box(
+                    low=0, high=255, shape=(20, 20), dtype=np.int32
+                ),
                 "target_position": spaces.Box(0, grid_size - 1, shape=(2,), dtype=int),
             }
         )
@@ -64,7 +71,7 @@ class DungeonMazeEnv(gym.Env):
         # to ensure that the environment is rendered at the correct framerate in
         # human-mode. They will remain `None` until human-mode is used for the
         # first time.
-        
+
         self.window = None
         self.clock = None
 
@@ -77,9 +84,9 @@ class DungeonMazeEnv(gym.Env):
             "robot_position": self.robot_position,
             "robot_direction": self.robot_direction,
             "robot_camera_view": self.robot_camera_view,
-            "target_position": self.target_position, 
+            "target_position": self.target_position,
         }
-    
+
     def get_robot_direction_vector(self):
         """
         Get the direction vector for the robot, pointing in the direction
@@ -103,10 +110,10 @@ class DungeonMazeEnv(gym.Env):
         Get the position of the cell that is right in front of the robot
         """
         return self.robot_position + self.get_robot_direction_vector()
-    
+
     def get_robot_camera_view(self):
         """
-        Returns the 'camera view' for the robot i.e. the image the object in the cell 
+        Returns the 'camera view' for the robot i.e. the image the object in the cell
         in front of the robot. If the cell is empty, then returns a white image.
         """
         # Get the position in front of the robot
@@ -117,7 +124,7 @@ class DungeonMazeEnv(gym.Env):
 
         if cell_in_front is None:
             # if nothing in front return a white image
-            return np.ones((20,20))*255
+            return np.ones((20, 20)) * 255
         else:
             return cell_in_front.get_camera_view()
 
@@ -125,7 +132,7 @@ class DungeonMazeEnv(gym.Env):
         """
         Initialises the environment for a new episode with a randomly generated maze.
         Robot is always initialised at position [1,1] facing south.
-        Target is always initialised at [-2,-2]. 
+        Target is always initialised at [-2,-2].
         """
         # We need the following line to seed self.np_random
         super().reset(seed=seed)
@@ -134,7 +141,7 @@ class DungeonMazeEnv(gym.Env):
         self.maze = MazeGrid(size=self.grid_size, empty=False, np_rng=self.np_random)
 
         # Set the target location
-        self.target_position = np.array([self.grid_size-2, self.grid_size-2])
+        self.target_position = np.array([self.grid_size - 2, self.grid_size - 2])
 
         # Set the robot's location, direction, inital camera view
         self.robot_position = np.array([1, 1])
@@ -147,11 +154,11 @@ class DungeonMazeEnv(gym.Env):
         if self.render_mode == "human":
             self._render_frame()
 
-        return observation, {}     
-    
+        return observation, {}
+
     def step(self, action):
         """
-        Performs one step of the simulation with the given action. 
+        Performs one step of the simulation with the given action.
         Returning the new state, reward and whether the episode has terminated.
         """
         reward = -1
@@ -227,7 +234,7 @@ class DungeonMazeEnv(gym.Env):
 
         # Draw the walls
         for cell in self.maze.grid:
-            if cell is not None and cell.type == 'wall':
+            if cell is not None and cell.type == "wall":
                 pygame.draw.rect(
                     canvas,
                     (0, 0, 0),
@@ -242,33 +249,41 @@ class DungeonMazeEnv(gym.Env):
             pygame.draw.polygon(
                 canvas,
                 (0, 0, 255),
-                ((self.robot_position + np.array([0.1, 0.9])) * pix_square_size, 
-                (self.robot_position + np.array([0.9, 0.9])) * pix_square_size,
-                (self.robot_position + np.array([0.5, 0.1])) * pix_square_size),
+                (
+                    (self.robot_position + np.array([0.1, 0.9])) * pix_square_size,
+                    (self.robot_position + np.array([0.9, 0.9])) * pix_square_size,
+                    (self.robot_position + np.array([0.5, 0.1])) * pix_square_size,
+                ),
             )
         elif self.robot_direction == Directions.east:
             pygame.draw.polygon(
                 canvas,
                 (0, 0, 255),
-                ((self.robot_position + np.array([0.1, 0.9])) * pix_square_size, 
-                (self.robot_position + np.array([0.1, 0.1])) * pix_square_size,
-                (self.robot_position + np.array([0.9, 0.5])) * pix_square_size),
+                (
+                    (self.robot_position + np.array([0.1, 0.9])) * pix_square_size,
+                    (self.robot_position + np.array([0.1, 0.1])) * pix_square_size,
+                    (self.robot_position + np.array([0.9, 0.5])) * pix_square_size,
+                ),
             )
         elif self.robot_direction == Directions.south:
             pygame.draw.polygon(
                 canvas,
                 (0, 0, 255),
-                ((self.robot_position + np.array([0.9, 0.1])) * pix_square_size, 
-                (self.robot_position + np.array([0.1, 0.1])) * pix_square_size,
-                (self.robot_position + np.array([0.5, 0.9])) * pix_square_size),
+                (
+                    (self.robot_position + np.array([0.9, 0.1])) * pix_square_size,
+                    (self.robot_position + np.array([0.1, 0.1])) * pix_square_size,
+                    (self.robot_position + np.array([0.5, 0.9])) * pix_square_size,
+                ),
             )
         elif self.robot_direction == Directions.west:
             pygame.draw.polygon(
                 canvas,
                 (0, 0, 255),
-                ((self.robot_position + np.array([0.9, 0.1])) * pix_square_size, 
-                (self.robot_position + np.array([0.9, 0.9])) * pix_square_size,
-                (self.robot_position + np.array([0.1, 0.5])) * pix_square_size),
+                (
+                    (self.robot_position + np.array([0.9, 0.1])) * pix_square_size,
+                    (self.robot_position + np.array([0.9, 0.9])) * pix_square_size,
+                    (self.robot_position + np.array([0.1, 0.5])) * pix_square_size,
+                ),
             )
 
         # Finally, draw some gridlines
@@ -302,7 +317,7 @@ class DungeonMazeEnv(gym.Env):
             return np.transpose(
                 np.array(pygame.surfarray.pixels3d(canvas)), axes=(1, 0, 2)
             )
-        
+
     def close(self):
         if self.window is not None:
             pygame.display.quit()
