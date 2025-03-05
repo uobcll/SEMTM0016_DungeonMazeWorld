@@ -1,6 +1,6 @@
 from envs.simple_dungeonworld_env import DungeonMazeEnv
 
-SIZE=8
+SIZE = 8
 
 # Load the simple dungeon maze env
 env = DungeonMazeEnv(render_mode="human", grid_size=SIZE)
