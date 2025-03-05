@@ -22,5 +22,5 @@ obs = env.reset(seed=124)
 env.render()
 
 # Check target in the correct place
-assert env.maze.get_grid_item(SIZE-2, SIZE-2).type == 'target'
-assert np.array_equal(146*np.ones((20,20)), env.maze.get_grid_item(SIZE-2, SIZE-2).image)
+assert env.maze.get_cell_item(SIZE-2, SIZE-2).type == 'target'
+assert np.array_equal(146*np.ones((20,20)), env.maze.get_cell_item(SIZE-2, SIZE-2).image)

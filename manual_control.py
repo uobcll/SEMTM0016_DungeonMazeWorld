@@ -10,7 +10,7 @@ env.reset(seed=124)
 
 # Manual control for checking
 for i in range(100):
-    action = input("input action, 0=right, 1=left, 2=forwards")
+    action = input("input action, 0=turn right, 1=turn left, 2=move forwards")
     next_state, reward, terminated, stuck, info = env.step(int(action))
     print("next_state", next_state)
     print("reward", reward)
