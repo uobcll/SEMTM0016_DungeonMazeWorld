@@ -10,7 +10,7 @@ Set up a virtual environment - check the worksheet for Week 13 on the Blackboard
 
 ## Default MDP (`DungeonMazeEnv` class)
 
-Action Space: The action space is discrete in the range `{0,2}` for `{turn left, turn right, move forwards}`.
+Action Space: The action space is discrete in the set `{0,2}` for `{turn left, turn right, move forwards}`.
 
 Observation Space: The observation space is a composite with:
 
