@@ -6,6 +6,8 @@ Simple implementation of the maze solving gridworld problem based on [Gymnasium]
 
 ## How do you use it?
 
+Set up a virtual environment - check the worksheet for Week 13 on the Blackboard page if you're unsure how to do this. You will require Python 3.10 or above. Install the dependencies given in `requirements.txt`. Then you can run the simulation controlling the robot manually by running the Python file `manual_control.py` through your activated virtual environment. Further examples of us can be found in `tests.py`.
+
 ## Default MDP (`DungeonMazeEnv` class)
 
 Action Space: The action space is discrete in the range `{0,2}` for `{turn left, turn right, move forwards}`.

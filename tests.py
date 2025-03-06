@@ -21,6 +21,7 @@ env.reset(seed=2)
 maze3 = env.maze
 assert not maze1.__eq__(maze3)
 
+# Now reset environment to check initialisation and actions work as expected
 env.reset(seed=124)
 
 # Check target in the correct place
@@ -67,7 +68,7 @@ assert np.array_equal(observation["robot_camera_view"], WALL_CELL_IMAGE)
 assert reward == -100
 assert terminated == True
 
-# Check action sequence to reach target
+# Reset environment again, check action sequence reaches target
 env.reset(seed=124)
 total_reward = 0
 action_sequence = [
