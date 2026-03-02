@@ -65,8 +65,8 @@ observation, reward, terminated, truncated, info = env.step(Actions.move_forward
 assert np.array_equal(observation["robot_position"], np.array([1, 2]))
 assert observation["robot_direction"] == Directions.south
 assert np.array_equal(observation["robot_camera_view"], WALL_CELL_IMAGE)
-assert reward == -100
-assert terminated == True
+assert reward == 0
+assert terminated == False
 
 # Reset environment again, check action sequence reaches target
 env.reset(seed=124)

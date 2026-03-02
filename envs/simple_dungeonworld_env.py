@@ -183,9 +183,8 @@ class DungeonMazeEnv(gym.Env):
             if cell_in_front is None or cell_in_front.can_overlap():
                 self.robot_position = position_in_front
             else:
-                # Terminate with penalty as robot tried to crash into an object in the cell in front.
-                terminated = True
-                reward = -100
+                # Zero reward as robot tried to crash into an object in the cell in front.
+                reward = 0
         else:
             assert False, "unknown action"
 
